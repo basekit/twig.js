@@ -25,7 +25,7 @@ node_modules:
 	npm install
 
 vendor:
-	composer install
+	php composer.phar install
 
 phpcs: vendor
 	./vendor/bin/phpcs --standard=PSR2 --error-severity=1 src
