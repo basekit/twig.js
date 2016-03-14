@@ -31,6 +31,8 @@ class GoogleCompiler extends ModuleCompiler implements TypeCompilerInterface
     {
         $this->functionName = $functionName = $compiler->templateFunctionName
             = $compiler->getFunctionName($node);
+        $this->functionNameTemplate = "Twig.templates['%s']";
+        $compiler->functionNameTemplate = $this->functionNameTemplate;
 
         $parts = explode('.', $functionName);
         array_pop($parts);
@@ -84,5 +86,10 @@ class GoogleCompiler extends ModuleCompiler implements TypeCompilerInterface
 
     protected function compileClassFooter(JsCompiler $compiler, Twig_NodeInterface $node)
     {
+    }
+
+    protected function foo($bar)
+    {
+        return "Twig.templates['".$bar."']";
     }
 }

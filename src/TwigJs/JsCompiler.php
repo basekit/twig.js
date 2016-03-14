@@ -405,4 +405,9 @@ class JsCompiler extends \Twig_Compiler
 
         return $this;
     }
+
+    public function isGoogleCompiler()
+    {
+        return $this->typeCompilers['Twig_Node_Module'] instanceof ModuleCompiler\GoogleCompiler;
+    }
 }

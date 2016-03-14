@@ -22,6 +22,8 @@ class AmdCompiler extends ModuleCompiler implements TypeCompilerInterface
     {
         $this->functionName = $functionName = $compiler->templateFunctionName
             = $compiler->getFunctionName($node);
+        $this->functionNameTemplate = "%s";
+        $compiler->functionNameTemplate = $this->functionNameTemplate;
 
         $parts = explode('.', $functionName);
         array_pop($parts);
