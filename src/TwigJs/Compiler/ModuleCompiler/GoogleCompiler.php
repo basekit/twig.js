@@ -87,9 +87,4 @@ class GoogleCompiler extends ModuleCompiler implements TypeCompilerInterface
     protected function compileClassFooter(JsCompiler $compiler, Twig_NodeInterface $node)
     {
     }
-
-    protected function foo($bar)
-    {
-        return "Twig.templates['".$bar."']";
-    }
 }
