@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "twig/twig": ">=1.15,<2.0"
+        "twig/twig": "^1.25"
     },
     "require-dev": {
         "dnode/dnode": "~0.2",
@@ -27,6 +27,8 @@
     "replace": {
         "jms/twig-js": "*"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": { "TwigJs\\": "src/TwigJs/" }
     },
