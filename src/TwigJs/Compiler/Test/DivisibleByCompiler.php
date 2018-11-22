@@ -9,7 +9,7 @@ class DivisibleByCompiler implements TestCompilerInterface
 {
     public function getName()
     {
-        return 'divisibleby';
+        return 'divisible by';
     }
 
     public function compile(JsCompiler $compiler, \Twig_Node_Expression_Test $node)

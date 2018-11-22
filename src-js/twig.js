@@ -131,10 +131,11 @@ twig.attr = function(obj, attr, opt_args, opt_accessType, opt_isTest) {
 	attr = attr.toLowerCase();
 	var getter = 'get' + attr;
 	var isser = 'is' + attr;
+	var macro = 'macro_' +  attr;
 	var functionName = goog.object.findKey(obj, function(v, k) {
 		k = k.toLowerCase();
 		
-		return k === getter || k === isser;
+		return k === getter || k === isser || k === macro;
 	});
 	
 	if (functionName && goog.isFunction(obj[functionName])) {

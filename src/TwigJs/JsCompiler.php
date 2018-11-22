@@ -185,13 +185,13 @@ class JsCompiler extends \Twig_Compiler
 
         $this->testCompilers = array(
             'defined' => new DefinedCompiler(),
-            'divisibleby' => new DivisibleByCompiler(),
+            'divisible by' => new DivisibleByCompiler(),
             'empty' => new EmptyCompiler(),
             'even' => new EvenCompiler(),
             'none' => new NoneCompiler(),
             'null' => new NullCompiler(),
             'odd' => new OddCompiler(),
-            'sameas' => new SameAsCompiler(),
+            'same as' => new SameAsCompiler(),
         );
 
         $this->filterCompilers = array();
@@ -317,27 +317,20 @@ class JsCompiler extends \Twig_Compiler
             $this->functionMap[$twigFunctionName] : null;
     }
 
-    public function compile(\Twig_NodeInterface $node, $indentation = 0)
+    public function compile(\Twig_Node $node, $indentation = 0)
     {
-        $this->lastLine = null;
-        $this->source = '';
-        $this->sourceOffset = 0;
-        $this->sourceLine = 0;
-        $this->indentation = $indentation;
-
         $this->subcompile($node);
-
         return $this;
     }
 
-    public function subcompile(\Twig_NodeInterface $node, $raw = true)
+    public function subcompile(\Twig_Node $node, $raw = true)
     {
         if ($node instanceof \Twig_Profiler_Node_EnterProfile || $node instanceof \Twig_Profiler_Node_LeaveProfile) {
             return $this;
         }
 
         if (false === $raw) {
-            $this->addIndentation();
+            $this->write('');
         }
 
         $nodeClass = get_class($node);
@@ -401,8 +394,7 @@ class JsCompiler extends \Twig_Compiler
 
     public function repr($value)
     {
-        $this->source .= json_encode($value);
-
+        $this->raw(json_encode($value));
         return $this;
     }
 }

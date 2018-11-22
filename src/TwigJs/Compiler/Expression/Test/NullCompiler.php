@@ -12,7 +12,7 @@ class NullCompiler implements TypeCompilerInterface
         return 'Twig_Node_Expression_Test_Null';
     }
 
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, \Twig_Node $node)
     {
         if (!$node instanceof \Twig_Node_Expression_Test_Null) {
             throw new \RuntimeException(

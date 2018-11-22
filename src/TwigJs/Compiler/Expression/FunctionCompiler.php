@@ -28,7 +28,7 @@ class FunctionCompiler implements TypeCompilerInterface
         return 'Twig_Node_Expression_Function';
     }
 
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, \Twig_Node $node)
     {
         if (!$node instanceof \Twig_Node_Expression_Function) {
             throw new \RuntimeException(

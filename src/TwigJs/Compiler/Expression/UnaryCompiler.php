@@ -23,7 +23,7 @@ use TwigJs\TypeCompilerInterface;
 
 abstract class UnaryCompiler implements TypeCompilerInterface
 {
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, \Twig_Node $node)
     {
         if (!$node instanceof \Twig_Node_Expression_Unary) {
             throw new \RuntimeException(
@@ -34,13 +34,13 @@ abstract class UnaryCompiler implements TypeCompilerInterface
             );
         }
 
-        $compiler->raw('(');
         $this->operator($compiler, $node);
+        $compiler->raw('(');
         $compiler
             ->subcompile($node->getNode('node'))
             ->raw(')')
         ;
     }
 
-    abstract protected function operator(JsCompiler $compiler, \Twig_NodeInterface $node);
+    abstract protected function operator(JsCompiler $compiler, \Twig_Node $node);
 }

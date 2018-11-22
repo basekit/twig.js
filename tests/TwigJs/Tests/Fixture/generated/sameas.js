@@ -36,7 +36,7 @@ sameas.prototype.render_ = function(sb, context, blocks) {
     // line 1
     sb.append("This is a simple template.<br \/><br \/>\n\n");
     // line 3
-    if ((!(("name" in context ? context["name"] : null) === false))) {
+    if (!((("name" in context ? context["name"] : null) === false))) {
         // line 4
         sb.append("Hello not false!\n");
     }

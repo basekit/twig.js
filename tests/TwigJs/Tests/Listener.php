@@ -1,69 +1,87 @@
 <?php
 namespace TwigJs\Tests;
 
-use DNode;
+use DNode\DNode;
 use Exception;
-use PHPUnit_Framework_AssertionFailedError;
-use PHPUnit_Framework_Test;
-use PHPUnit_Framework_TestListener;
-use PHPUnit_Framework_TestSuite;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\Warning;
 use React;
+use React\EventLoop\StreamSelectLoop;
 use TwigJs;
 
-class Listener implements PHPUnit_Framework_TestListener
+class Listener implements TestListener
 {
-    public function startTest(PHPUnit_Framework_Test $test)
+    /**
+     * @var StreamSelectLoop
+     */
+    private $loop;
+
+    /**
+     * @var DNode
+     */
+    private $dnode;
+
+    public function startTest(Test $test): void
     {
         if ($test instanceof TwigJs\Tests\FullIntegrationTest) {
-            $this->loop = new React\EventLoop\StreamSelectLoop();
-            $this->dnode = new DNode\DNode($this->loop);
+            $this->loop = new StreamSelectLoop();
+            $this->dnode = new DNode($this->loop);
             $test->setDnode($this->dnode, $this->loop);
         }
     }
 
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function endTestSuite(TestSuite $suite): void
     {
-        $exit = function ($remote, $connection) {
-            $remote->exit(function () use ($connection) {
-                $connection->end();
+        if (isset($this->dnode)) {
+            $exit = function ($remote, $connection) {
+                $remote->exit(function () use ($connection) {
+                    $connection->end();
+                });
+            };
+
+            $this->dnode->on('error', function ($e) {
+                // Do nothing.
+                // This error means the dnode server isn't running, so it doesn't
+                // matter that we can't connect to it in order to shut it down.
             });
-        };
 
-        $this->dnode->on('error', function ($e) {
-            // Do nothing.
-            // This error means the dnode server isn't running, so it doesn't
-            // matter that we can't connect to it in order to shut it down.
-        });
-
-        $this->dnode->connect(7070, $exit);
-        $this->loop->run();
+            $this->dnode->connect(7070, $exit);
+            $this->loop->run();
+        }
     }
 
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addError(Test $test, \Throwable $t, float $time): void
     {
     }
 
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
+    public function addWarning(Test $test, Warning $e, float $time): void
     {
     }
 
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addFailure(Test $test, AssertionFailedError $e, float $time): void
     {
     }
 
-    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addIncompleteTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addRiskyTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function addSkippedTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
-    public function endTest(PHPUnit_Framework_Test $test, $time)
+    public function startTestSuite(TestSuite $suite): void
+    {
+    }
+
+    public function endTest(Test $test, float $time): void
     {
     }
 }
