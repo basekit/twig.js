@@ -180,7 +180,7 @@ class JsCompiler extends \Twig_Compiler
             'Twig_Node_Expression_Test_Null' => new Compiler\Expression\Test\NullCompiler(),
             'Twig_Node_Expression_Test_Odd' => new Compiler\Expression\Test\OddCompiler(),
             'Twig_Node_Expression_Test_Sameas' => new Compiler\Expression\Test\SameasCompiler(),
-
+            \Twig\Node\ModuleNode::class => new ModuleCompiler\GoogleCompiler(),
         );
 
         $this->testCompilers = array(
