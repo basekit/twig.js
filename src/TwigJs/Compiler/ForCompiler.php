@@ -18,6 +18,7 @@
 
 namespace TwigJs\Compiler;
 
+use Twig\Node\Node;
 use TwigJs\JsCompiler;
 use TwigJs\TypeCompilerInterface;
 
@@ -27,15 +28,16 @@ class ForCompiler implements TypeCompilerInterface
 
     public function getType()
     {
-        return 'Twig_Node_For';
+        return 'Twig\Node\ForNode';
     }
 
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, Node $node)
     {
-        if (!$node instanceof \Twig_Node_For) {
+        if (!$node instanceof \Twig\Node\ForNode) {
             throw new \RuntimeException(
                 sprintf(
-                    '$node must be an instanceof of \For, but got "%s".',
+                    '$node must be an instanceof of %s, but got "%s".',
+                    $this->getType(),
                     get_class($node)
                 )
             );
@@ -73,7 +75,7 @@ class ForCompiler implements TypeCompilerInterface
             ->raw(";\n")
         ;
 
-        if (null !== $node->getNode('else')) {
+        if ($this->hasElseNode($node)) {
             $compiler->write("var $iteratedName = false;\n");
         }
 
@@ -117,7 +119,7 @@ class ForCompiler implements TypeCompilerInterface
         $ref = new \ReflectionProperty($node, 'loop');
         $ref->setAccessible(true);
         $loop = $ref->getValue($node);
-        $loop->setAttribute('else', null !== $node->getNode('else'));
+        $loop->setAttribute('else', $this->hasElseNode($node));
         $loop->setAttribute('with_loop', $node->getAttribute('with_loop'));
         $loop->setAttribute('ifexpr', $node->getAttribute('ifexpr'));
 
@@ -135,7 +137,7 @@ class ForCompiler implements TypeCompilerInterface
             ->write("}, this);\n")
         ;
 
-        if (null !== $node->getNode('else')) {
+        if ($this->hasElseNode($node)) {
             $compiler
                 ->write("if (!$iteratedName) {\n")
                 ->indent()
@@ -149,5 +151,18 @@ class ForCompiler implements TypeCompilerInterface
             $compiler->leaveScope();
         }
         $this->count = $count;
+    }
+
+    private function hasElseNode(Node $node)
+    {
+        if (!$node->hasNode('else')) {
+            return false;
+        }
+
+        if (null === $node->getNode('else')) {
+            return false;
+        }
+
+        return true;
     }
 }

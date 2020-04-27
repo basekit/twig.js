@@ -1,0 +1,5 @@
+{% macro macro_test(arg1, arg2) %}
+    {% set arg3 = arg2|default('') %}
+    {{ arg1 }}
+    {% if arg3 is not empty %}{{ arg3 }}{% endif %}
+{% endmacro %}

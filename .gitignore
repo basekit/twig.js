@@ -1,6 +1,11 @@
 bin/plovr
-phpunit.xml
-config.php
+composer.lock
 vendor/
 tmp/
 node_modules/
+
+# Ignore specific files.
+/config.php
+/composer.lock
+/package-lock.json
+/phpunit.xml

@@ -18,6 +18,7 @@
 
 namespace TwigJs\Compiler\Expression;
 
+use Twig\Node\Node;
 use TwigJs\JsCompiler;
 use TwigJs\TypeCompilerInterface;
 
@@ -25,15 +26,16 @@ class ConstantCompiler implements TypeCompilerInterface
 {
     public function getType()
     {
-        return 'Twig_Node_Expression_Constant';
+        return 'Twig\Node\Expression\ConstantExpression';
     }
 
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, Node $node)
     {
-        if (!$node instanceof \Twig_Node_Expression_Constant) {
+        if (!$node instanceof \Twig\Node\Expression\ConstantExpression) {
             throw new \RuntimeException(
                 sprintf(
-                    '$node must be an instanceof of \Expression_Constant, but got "%s".',
+                    '$node must be an instanceof of %s, but got "%s".',
+                    $this->getType(),
                     get_class($node)
                 )
             );
@@ -41,7 +43,7 @@ class ConstantCompiler implements TypeCompilerInterface
 
         if ($compiler->isTemplateName) {
             $env = $compiler->getEnvironment();
-            $source = $env->getLoader()->getSource($node->getAttribute('value'));
+            $source = $env->getLoader()->getSourceContext($node->getAttribute('value'));
             $module = $env->parse($env->tokenize($source, $node->getAttribute('value')));
 
             $compiler->raw(sprintf($compiler->functionNameTemplate, $compiler->getFunctionName($module)));
