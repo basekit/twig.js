@@ -2,10 +2,10 @@
 
 namespace TwigJs\Tests;
 
-use DNode;
-use Exception;
-use PHPUnit_Framework_TestCase;
+use DNode\DNode;
+use PHPUnit\Framework\TestCase;
 use React;
+use React\EventLoop\StreamSelectLoop;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
@@ -13,13 +13,32 @@ use RegexIterator;
 use TwigJs\Twig\TwigJsExtension;
 use TwigJs\JsCompiler;
 use Twig_Environment;
-use Twig_Extension_Core;
 use Twig_Loader_Array;
 use Twig_Loader_Chain;
 use Twig_Loader_Filesystem;
 
-class FullIntegrationTest extends PHPUnit_Framework_TestCase
+class FullIntegrationTest extends TestCase
 {
+    /**
+     * @var StreamSelectLoop
+     */
+    private $loop;
+
+    /**
+     * @var DNode
+     */
+    private $dnode;
+
+    /**
+     * @var \Twig_Environment
+     */
+    private $env;
+
+    /**
+     * @var \Twig_Loader_Array
+     */
+    private $arrayLoader;
+
     public function setDnode($dnode, $loop)
     {
         $this->dnode = $dnode;
@@ -29,8 +48,7 @@ class FullIntegrationTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->arrayLoader = new Twig_Loader_Array(array());
-        $this->env = new Twig_Environment();
-        $this->env->addExtension(new Twig_Extension_Core());
+        $this->env = new Twig_Environment($this->arrayLoader);
         $this->env->addExtension(new TwigJsExtension());
         $this->env->setLoader(
             new Twig_Loader_Chain(
@@ -51,7 +69,6 @@ class FullIntegrationTest extends PHPUnit_Framework_TestCase
     {
         foreach ($outputs as $match) {
             $templateParameters = $match[1];
-            $templateSource = $templates['index.twig'];
             $javascript = '';
             foreach ($templates as $name => $twig) {
                 $this->arrayLoader->setTemplate($name, $twig);
@@ -60,19 +77,13 @@ class FullIntegrationTest extends PHPUnit_Framework_TestCase
                 $javascript .= $this->compileTemplate($twig, $name);
             }
             $expectedOutput = trim($match[3], "\n ");
-            try {
-                $renderedOutput = $this->renderTemplate('Twig.templates.index', $javascript, $templateParameters);
-            } catch (Exception $e) {
-                $this->markTestSkipped($e->getMessage());
-            }
-
+            $renderedOutput = $this->renderTemplate('index', $javascript, $templateParameters);
             $this->assertEquals($expectedOutput, $renderedOutput);
         }
     }
 
     public function getIntegrationTests()
     {
-        $tests = array();
         $directory = new RecursiveDirectoryIterator(__DIR__ . '/Fixture/integration');
         $iterator = new RecursiveIteratorIterator($directory);
         $regex = new RegexIterator($iterator, '/\.test/', RecursiveRegexIterator::GET_MATCH);
@@ -118,6 +129,10 @@ class FullIntegrationTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @param string $test
+     * @return array
+     */
     protected static function parseTemplates($test)
     {
         $templates = array();
@@ -129,12 +144,26 @@ class FullIntegrationTest extends PHPUnit_Framework_TestCase
         return $templates;
     }
 
+    /**
+     * @param string $source
+     * @param string $name
+     * @return string
+     * @throws \Twig_Error_Syntax
+     */
     private function compileTemplate($source, $name)
     {
-        $javascript = $this->env->compileSource($source, $name);
+        $source = new \Twig_Source($source, $name);
+        $javascript = $this->env->compileSource($source);
         return $javascript;
     }
 
+    /**
+     * @param string $name
+     * @param string $javascript
+     * @param array $parameters
+     * @return string
+     * @throws \Exception
+     */
     private function renderTemplate($name, $javascript, $parameters)
     {
         $output = '';

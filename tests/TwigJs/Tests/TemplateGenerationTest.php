@@ -2,31 +2,41 @@
 
 namespace TwigJs\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Twig_Loader_Array;
 use TwigJs\Twig\TwigJsExtension;
 use TwigJs\JsCompiler;
 
-class TemplateGenerationTest extends \PHPUnit_Framework_TestCase
+class TemplateGenerationTest extends TestCase
 {
     /**
-     * @dataProvider getGenerationTests
+     * @dataProvider providesGenerationTests()
+     *
+     * @param string $inputFile
+     * @param string $outputFile
+     * @throws \Twig_Error_Syntax
      */
-    public function testGenerate($inputFile, $outputFile)
+    public function testGenerate(string $inputFile, string $outputFile): void
     {
-        $env = new \Twig_Environment();
-        $env->addExtension(new \Twig_Extension_Core());
+        $arrayLoader = new Twig_Loader_Array(array());
+        $env = new \Twig_Environment($arrayLoader);
         $env->addExtension(new TwigJsExtension());
         $env->setLoader(new \Twig_Loader_Filesystem(__DIR__.'/Fixture/templates'));
         $env->setCompiler(new JsCompiler($env));
 
         $source = file_get_contents($inputFile);
+        $source = new \Twig_Source($source, $inputFile);
 
         $this->assertEquals(
             file_get_contents($outputFile),
-            $env->compileSource($source, $inputFile)
+            $env->compileSource($source)
         );
     }
 
-    public function getGenerationTests()
+    /**
+     * @return array
+     */
+    public function providesGenerationTests(): array
     {
         $tests = array();
         $files = new \RecursiveDirectoryIterator(
@@ -44,6 +54,7 @@ class TemplateGenerationTest extends \PHPUnit_Framework_TestCase
                 __DIR__.'/Fixture/generated/'.basename($file, '.twig').'.js',
             );
         }
+
 
         return $tests;
     }

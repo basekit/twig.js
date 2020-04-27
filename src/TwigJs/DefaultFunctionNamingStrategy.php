@@ -18,15 +18,17 @@
 
 namespace TwigJs;
 
+use Twig\Node\ModuleNode;
+
 class DefaultFunctionNamingStrategy implements FunctionNamingStrategyInterface
 {
-    public function getFunctionName(\Twig_Node_Module $module)
+    public function getFunctionName(ModuleNode $module)
     {
         if ($module->hasAttribute('twig_js_name')) {
             return $module->getAttribute('twig_js_name');
         }
 
-        $templateName = $module->getAttribute('filename');
+        $templateName = $module->getTemplateName();
         $templateName = basename($templateName, '.twig');
         $templateName = str_replace(':', '.', $templateName);
         $templateName = preg_replace('/\.+/', '.', $templateName);

@@ -18,6 +18,10 @@
 
 namespace TwigJs\Compiler\Expression;
 
+use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\FilterExpression;
+use Twig\Node\Node;
+use Twig\Template;
 use TwigJs\JsCompiler;
 use TwigJs\TypeCompilerInterface;
 
@@ -25,15 +29,16 @@ class GetAttrCompiler implements TypeCompilerInterface
 {
     public function getType()
     {
-        return 'Twig_Node_Expression_GetAttr';
+        return 'Twig\Node\Expression\GetAttrExpression';
     }
 
-    public function compile(JsCompiler $compiler, \Twig_NodeInterface $node)
+    public function compile(JsCompiler $compiler, Node $node)
     {
-        if (!$node instanceof \Twig_Node_Expression_GetAttr) {
+        if (!$node instanceof \Twig\Node\Expression\GetAttrExpression) {
             throw new \RuntimeException(
                 sprintf(
-                    '$node must be an instanceof of \Expression_GetAttr, but got "%s".',
+                    '$node must be an instanceof of %s, but got "%s".',
+                    $this->getType(),
                     get_class($node)
                 )
             );
@@ -42,11 +47,11 @@ class GetAttrCompiler implements TypeCompilerInterface
         $compiler->raw('twig.attr(');
 
         if ($node->getAttribute('is_defined_test') && $compiler->getEnvironment()->isStrictVariables()) {
-            $compiler->subcompile(new \Twig_Node_Expression_Filter(
+            $compiler->subcompile(new FilterExpression(
                 $node->getNode('node'),
-                new \Twig_Node_Expression_Constant('default', $node->getLine()),
-                new \Twig_Node(),
-                $node->getLine()
+                new ConstantExpression('default', $node->getTemplateLine()),
+                new Node(),
+                $node->getTemplateLine()
             ));
         } else {
             $compiler->subcompile($node->getNode('node'));
@@ -57,8 +62,8 @@ class GetAttrCompiler implements TypeCompilerInterface
             ->subcompile($node->getNode('attribute'))
         ;
 
-        $defaultArguments = 0 === ($node->hasNode('arguments') ? count($node->getNode('arguments')) : 0);
-        $defaultAccess = \Twig_TemplateInterface::ANY_CALL === $node->getAttribute('type');
+        $defaultArguments = 0 === count($node->getNode('arguments'));
+        $defaultAccess = Template::ANY_CALL === $node->getAttribute('type');
         $defaultTest = false == $node->getAttribute('is_defined_test');
 
         if (!$defaultArguments) {
