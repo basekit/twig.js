@@ -22,6 +22,8 @@ use Twig\Compiler as TwigCompiler;
 use Twig\Environment;
 use Twig\Node\ModuleNode;
 use Twig\Node\Node;
+use TwigJs\Compiler\DoCompiler;
+use TwigJs\Compiler\InlinePrintCompiler;
 use TwigJs\Compiler\MacroCompiler;
 use TwigJs\Compiler\Test\SameAsCompiler;
 use TwigJs\Compiler\Test\OddCompiler;
@@ -114,6 +116,7 @@ class JsCompiler extends TwigCompiler
 
         $this->typeCompilers = array(
             'Twig\Node\Node' => new NodeCompiler(),
+            'Twig\Node\DoNode' => new DoCompiler(),
             'Twig\Node\BodyNode' => new BodyCompiler(),
             'Twig\Node\ModuleNode' => new ModuleCompiler\GoogleCompiler(),
             'Twig\Node\BlockNode' => new BlockCompiler(),
@@ -139,6 +142,7 @@ class JsCompiler extends TwigCompiler
             'Twig\Node\Expression\TestExpression' => new TestCompiler(),
             'Twig\Node\Expression\NameExpression' => new NameCompiler(),
             'Twig\Node\Expression\FilterExpression' => new FilterCompiler(),
+            'Twig\Node\Expression\InlinePrint' => new InlinePrintCompiler(),
             'Twig\Node\Expression\Filter\DefaultFilter' => new Compiler\Expression\Filter\DefaultCompiler(),
             'Twig\Node\Expression\ConstantExpression' => new ConstantCompiler(),
             'Twig\Node\Expression\GetAttrExpression' => new GetAttrCompiler(),
