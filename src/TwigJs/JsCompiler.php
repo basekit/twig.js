@@ -18,6 +18,8 @@
 
 namespace TwigJs;
 
+use TwigJs\Compiler\DoCompiler;
+use TwigJs\Compiler\InlinePrintCompiler;
 use TwigJs\Compiler\MacroCompiler;
 use TwigJs\Compiler\Test\SameAsCompiler;
 use TwigJs\Compiler\Test\OddCompiler;
@@ -121,6 +123,7 @@ class JsCompiler extends \Twig_Compiler
             'Twig_Node_If' => new IfCompiler(),
             'Twig_Node_Print' => new PrintCompiler(),
             'Twig_Node_For' => new ForCompiler(),
+            'Twig_Node_Do' => new DoCompiler(),
             'Twig_Node_ForLoop' => new ForLoopCompiler(),
             'Twig_Node_Set' => new SetCompiler(),
             'Twig_Node_Include' => new IncludeCompiler(),
@@ -131,6 +134,7 @@ class JsCompiler extends \Twig_Compiler
             'Twig_Node_AutoEscape' => new AutoEscapeCompiler(),
             'Twig_Node_Import' => new ImportCompiler(),
             'Twig_Node_Macro' => new MacroCompiler(),
+            'Twig_Node_Expression_InlinePrint' => new InlinePrintCompiler(),
             'Twig_Node_Expression_TempName' => new TempNameCompiler(),
             'Twig_Node_Expression_DefaultFilter' => new DefaultFilterCompiler(),
             'Twig_Node_Expression_ExtensionReference' => new ExpressionExtensionReferenceCompiler(),
@@ -188,6 +192,7 @@ class JsCompiler extends \Twig_Compiler
             \Twig\Node\IfNode::class => new IfCompiler(),
             \Twig\Node\PrintNode::class => new PrintCompiler(),
             \Twig\Node\ForNode::class => new ForCompiler(),
+            \Twig\Node\DoNode::class => new DoCompiler(),
             \Twig\Node\ForLoopNode::class => new ForLoopCompiler(),
             \Twig\Node\SetNode::class => new SetCompiler(),
             \Twig\Node\IncludeNode::class => new IncludeCompiler(),
@@ -198,6 +203,7 @@ class JsCompiler extends \Twig_Compiler
             \Twig\Node\AutoEscapeNode::class => new AutoEscapeCompiler(),
             \Twig\Node\ImportNode::class => new ImportCompiler(),
             \Twig\Node\MacroNode::class => new MacroCompiler(),
+            \Twig\Node\Expression\InlinePrint::class => new InlinePrintCompiler(),
             \Twig\Node\Expression\TempNameExpression::class => new TempNameCompiler(),
             \Twig\Node\Expression\ConditionalExpression::class => new ConditionalCompiler(),
             \Twig\Node\Expression\ArrayExpression::class => new ArrayCompiler(),
