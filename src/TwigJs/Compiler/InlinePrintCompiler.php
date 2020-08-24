@@ -26,7 +26,7 @@ class InlinePrintCompiler implements TypeCompilerInterface
 
         $compiler
             ->addDebugInfo($node)
-            ->raw('print (')
+            ->write('sb.append(')
             ->subcompile($node->getNode('node'))
             ->raw(')')
         ;
